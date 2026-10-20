@@ -1,18 +1,16 @@
 import * as THREE from 'three';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 window.__gdsBoot = true;
 
 /* ------------------------------------------------------------------ */
-/* Content — one entry per project. Photos live in assets/work/        */
-/* full/ (viewer), wall/ (3D wall) and thumb/ (project list).          */
-/* `feature` picks up to three photos for the project's bay on the wall */
+/* Content: one entry per project. Photos live in assets/work/         */
+/* full/ (photo viewer), wall/ (carousel and 3D cards), thumb/ (grid). */
+/* `short` is the pill label; `feature[0]` is the cover photo.         */
 /* ------------------------------------------------------------------ */
 const PROJECTS = [
   {
     id: 'disney', title: 'Walt Disney World', where: 'Orlando, Florida',
-    plate: 'WALT DISNEY WORLD', sub: 'ORLANDO, FLORIDA',
+    short: 'Disney',
     blurb: 'Themed environments and wayfinding across the resort: ship interiors and control panels for Star Wars: Galaxy\'s Edge, Droid Depot workstations, and character-themed parking signs and column wraps.',
     tags: ['Themed environments', 'Control panels', 'Parking wayfinding'],
     feature: [1, 4, 7],
@@ -30,7 +28,7 @@ const PROJECTS = [
   },
   {
     id: 'universal', title: 'Universal Studios Florida', where: 'Orlando, Florida',
-    plate: 'UNIVERSAL STUDIOS', sub: 'ORLANDO, FLORIDA',
+    short: 'Universal',
     blurb: 'Queue graphics for the Bourne Stuntacular: printed photo panels on dimensional frames over backlit blue graphics, and a cut-metal figure set into a target ring.',
     tags: ['Queue graphics', 'Dimensional frames', 'Cut metal'],
     feature: [3, 4, 0],
@@ -44,7 +42,7 @@ const PROJECTS = [
   },
   {
     id: 'steelers', title: 'Pittsburgh Steelers Hall of Honor', where: 'Pittsburgh, Pennsylvania',
-    plate: 'PITTSBURGH STEELERS', sub: 'NFL HALL OF HONOR',
+    short: 'Steelers',
     blurb: 'An illuminated exhibit wall of inductee portraits and footballs, with a branded entry portal for the Hall of Honor.',
     tags: ['Exhibit wall', 'Illuminated displays', 'Entry portal'],
     feature: [0, 2, 1],
@@ -56,7 +54,7 @@ const PROJECTS = [
   },
   {
     id: 'pistons', title: 'Detroit Pistons', where: 'Detroit, Michigan',
-    plate: 'DETROIT PISTONS', sub: 'NBA, DETROIT, MICHIGAN',
+    short: 'Pistons',
     blurb: 'Exterior pylons for retired jersey numbers and a row of player monoliths along the entry plaza.',
     tags: ['Exterior pylons', 'Monoliths'],
     feature: [0, 1],
@@ -67,7 +65,7 @@ const PROJECTS = [
   },
   {
     id: 'mlb', title: 'MLB Corporate Offices', where: 'New York City',
-    plate: 'MLB CORPORATE OFFICES', sub: 'NEW YORK CITY',
+    short: 'MLB',
     blurb: 'Large-format wall graphics wrap the elevator lobbies and corridors with black-and-white photography of baseball legends. Line work bends with the folded walls, and a floor graphic carries a quote into the lobby.',
     tags: ['Wall graphics', 'Elevator lobby wraps', 'Floor graphics'],
     feature: [0, 1, 2],
@@ -79,7 +77,7 @@ const PROJECTS = [
   },
   {
     id: 'lga', title: 'LaGuardia Airport', where: 'New York City',
-    plate: 'LAGUARDIA AIRPORT', sub: 'NEW YORK CITY',
+    short: 'LaGuardia',
     blurb: 'Work on a large suspended installation hung through the terminal\'s open hall, built from thin frames and printed panels.',
     tags: ['Suspended installation'],
     feature: [1, 0],
@@ -90,7 +88,7 @@ const PROJECTS = [
   },
   {
     id: 'usaf', title: 'United States Air Force', where: 'Fort Worth, Texas',
-    plate: 'UNITED STATES AIR FORCE', sub: 'FORT WORTH, TEXAS',
+    short: 'Air Force',
     blurb: 'An outdoor memorial plaza with long interpretive walls of history panels, set around aircraft on display and a bronze statue.',
     tags: ['Interpretive walls', 'Memorial plaza'],
     feature: [1, 0, 2],
@@ -102,7 +100,7 @@ const PROJECTS = [
   },
   {
     id: 'sazoo', title: 'San Antonio Zoo', where: 'San Antonio, Texas',
-    plate: 'SAN ANTONIO ZOO', sub: 'SAN ANTONIO, TEXAS',
+    short: 'San Antonio Zoo',
     blurb: 'Parking garage facades: dimensional zoo letters, giraffe and butterfly graphics, and a tiger mural facing the street.',
     tags: ['Dimensional letters', 'Facade graphics', 'Murals'],
     feature: [2, 1, 0],
@@ -114,7 +112,7 @@ const PROJECTS = [
   },
   {
     id: 'hzoo', title: 'Houston Zoo', where: 'Houston, Texas',
-    plate: 'HOUSTON ZOO', sub: 'HOUSTON, TEXAS',
+    short: 'Houston Zoo',
     blurb: 'Signage for South America\'s Pantanal: a monument sign of painted posts, an entry sign, and bilingual English and Spanish interpretive panels.',
     tags: ['Monument signs', 'Interpretive panels', 'Bilingual signage'],
     feature: [2, 1, 4],
@@ -127,8 +125,8 @@ const PROJECTS = [
     ],
   },
   {
-    id: 'sdusd', title: 'San Diego Unified School District', where: 'Nipaquay Elementary and John Muir Language Academy, California',
-    plate: 'SAN DIEGO UNIFIED', sub: 'SCHOOL DISTRICT, CALIFORNIA',
+    id: 'sdusd', title: 'San Diego Unified School District', where: 'Nipaquay Elementary and John Muir Language Academy, California', place: 'San Diego, California',
+    short: 'San Diego Unified',
     blurb: 'Exterior signage and environmental graphics across two campuses: dimensional monument and building letters, an exterior mural, stair-riser graphics, a timeline pylon on the history of solar technology, perforated window graphics, banner blades and bilingual wayfinding.',
     tags: ['Monument signs', 'Dimensional letters', 'Murals', 'Wayfinding', 'Window graphics'],
     feature: [0, 4, 6],
@@ -145,7 +143,7 @@ const PROJECTS = [
   },
   {
     id: 'more', title: 'More installations', where: 'Campus letters',
-    plate: 'MORE INSTALLATIONS', sub: 'DIMENSIONAL LETTERS',
+    short: 'Campus letters',
     blurb: 'Dimensional and illuminated letter sets for campus entries and plazas.',
     tags: ['Dimensional letters', 'Illuminated letters'],
     feature: [0, 1],
@@ -167,6 +165,10 @@ const img = (f, size) => `assets/work/${size}/${f}.jpg`;
 const root = document.documentElement;
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 if (reduced) root.classList.add('reduced');
+const isSmall = window.innerWidth < 700;
+const photoIndex = (f) => PHOTOS.findIndex((p) => p.f === f);
+const clamp01 = (v) => Math.min(1, Math.max(0, v));
+const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
 function hasWebGL() {
   try {
@@ -176,276 +178,259 @@ function hasWebGL() {
 }
 
 /* ------------------------------------------------------------------ */
-/* Shared materials and textures                                       */
+/* HERO: project photos hung from a ceiling rail, like airport signs   */
 /* ------------------------------------------------------------------ */
-function makeWallTexture(base) {
-  const c = document.createElement('canvas');
-  c.width = c.height = 1024;
-  const g = c.getContext('2d');
-  g.fillStyle = base;
-  g.fillRect(0, 0, 1024, 1024);
-  // brushed paint: short horizontal strokes, light and dark
-  for (let i = 0; i < 3200; i++) {
-    const y = Math.random() * 1024, x = Math.random() * 1024, len = 30 + Math.random() * 280;
-    g.strokeStyle = Math.random() < 0.5 ? `rgba(255,255,255,${Math.random() * 0.03})` : `rgba(0,0,0,${Math.random() * 0.05})`;
-    g.lineWidth = 1;
-    g.beginPath(); g.moveTo(x, y); g.lineTo(x + len, y); g.stroke();
+const SIGNS = [
+  { f: 'sdusd-01', w: 1.75, drop: 0.62 },
+  { f: 'disney-05', w: 1.05, drop: 0.28 },
+  { f: 'sazoo-03', w: 1.65, drop: 0.9 },
+  { f: 'mlb-03', w: 1.3, drop: 0.42 },
+  { f: 'hzoo-03', w: 1.95, drop: 0.74 },
+];
+// on phones three signs hang as a staggered cluster from a rail that runs edge to edge
+const SIGNS_NARROW = [
+  { k: 1, x: -1.42, drop: 0.22, z: 0 },
+  { k: 2, x: 0.1, drop: 1.0, z: 0.04 },
+  { k: 4, x: 1.34, drop: 0.32, z: -0.04 },
+];
+
+function roundedRect(w, h, r) {
+  const s = new THREE.Shape();
+  const x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y);
+  s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
+  return s;
+}
+
+// a rounded-rectangle face whose UVs span the card, so a photo maps edge to edge
+function faceGeometry(w, h, r) {
+  const g = new THREE.ShapeGeometry(roundedRect(w, h, r), 12);
+  const pos = g.attributes.position;
+  const uv = new Float32Array(pos.count * 2);
+  for (let i = 0; i < pos.count; i++) {
+    uv[i * 2] = (pos.getX(i) + w / 2) / w;
+    uv[i * 2 + 1] = (pos.getY(i) + h / 2) / h;
   }
-  // panel reveals (aluminum composite panel seams)
-  g.fillStyle = 'rgba(0,0,0,0.5)';
-  g.fillRect(0, 0, 1024, 5); g.fillRect(0, 0, 5, 1024);
-  g.fillStyle = 'rgba(255,255,255,0.06)';
-  g.fillRect(0, 5, 1024, 2); g.fillRect(5, 0, 2, 1024);
+  g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+  return g;
+}
+
+// a pre-blurred rounded-rectangle shadow, like a CSS box-shadow, drawn once
+function shadowTexture() {
+  const c = document.createElement('canvas');
+  c.width = c.height = 256;
+  const g = c.getContext('2d');
+  const OFF = 2000;
+  g.shadowColor = 'rgba(0,0,0,1)';
+  g.shadowBlur = 34;
+  g.shadowOffsetX = OFF;
+  g.fillStyle = '#000';
+  g.beginPath();
+  if (g.roundRect) g.roundRect(48 - OFF, 48, 160, 160, 18);
+  else g.rect(48 - OFF, 48, 160, 160);
+  g.fill();
   const t = new THREE.CanvasTexture(c);
-  t.wrapS = t.wrapT = THREE.RepeatWrapping;
   t.colorSpace = THREE.SRGBColorSpace;
-  t.anisotropy = 8;
   return t;
 }
 
-function makeRenderer(canvas) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, window.innerWidth < 700 ? 1.5 : 2));
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  return renderer;
-}
-
-function envFor(renderer) {
-  const pmrem = new THREE.PMREMGenerator(renderer);
-  const tex = pmrem.fromScene(new RoomEnvironment(renderer), 0.04).texture;
-  pmrem.dispose();
-  return tex;
-}
-
-/* Visible / not visible -> run or pause a render loop */
 function whenVisible(el, onChange) {
   const io = new IntersectionObserver((entries) => entries.forEach((e) => onChange(e.isIntersecting)), { rootMargin: '120px' });
   io.observe(el);
 }
 
-/* Lay out a string glyph by glyph so each letter is its own mesh */
-function glyphRun(font, text, size, tracking) {
-  const scale = size / font.data.resolution;
-  const out = [];
-  let x = 0;
-  for (const ch of text) {
-    const g = font.data.glyphs[ch] || font.data.glyphs['?'];
-    const adv = (g ? g.ha : 500) * scale;
-    if (ch !== ' ') out.push({ ch, x, shapes: font.generateShapes(ch, size) });
-    x += (ch === ' ' ? adv * 1.1 : adv) + tracking;
-  }
-  return { glyphs: out, width: x - tracking };
-}
-
-function shapeBounds(shapes) {
-  const b = new THREE.Box2();
-  shapes.forEach((s) => s.getPoints(6).forEach((p) => b.expandByPoint(p)));
-  return b;
-}
-
-/* Halo texture: the letter's silhouette, blurred, as warm light on the wall */
-function haloTexture(shapes, size) {
-  const b = shapeBounds(shapes);
-  const pad = size * 0.6;
-  const ppu = 190;
-  const W = Math.ceil((b.max.x - b.min.x + pad * 2) * ppu);
-  const H = Math.ceil((b.max.y - b.min.y + pad * 2) * ppu);
-  const c = document.createElement('canvas');
-  c.width = W; c.height = H;
-  const g = c.getContext('2d');
-  const tx = (x) => (x - b.min.x + pad) * ppu;
-  const ty = (y) => (b.max.y + pad - y) * ppu;
-  const OFF = W * 4;
-  const path = () => {
-    g.beginPath();
-    shapes.forEach((s) => {
-      const draw = (pts) => {
-        pts.forEach((p, i) => (i ? g.lineTo(tx(p.x) - OFF, ty(p.y)) : g.moveTo(tx(p.x) - OFF, ty(p.y))));
-        g.closePath();
-      };
-      draw(s.getPoints(8));
-      s.holes.forEach((h) => draw(h.getPoints(8)));
-    });
-  };
-  g.shadowOffsetX = OFF;
-  g.fillStyle = '#000';
-  const layers = [
-    [0.34, 'rgba(255,170,90,0.55)'],
-    [0.34, 'rgba(255,180,100,0.55)'],
-    [0.14, 'rgba(255,205,150,0.9)'],
-    [0.04, 'rgba(255,236,205,1)'],
-  ];
-  layers.forEach(([blur, col]) => {
-    g.shadowBlur = blur * ppu;
-    g.shadowColor = col;
-    path();
-    g.fill('evenodd');
-  });
-  const t = new THREE.CanvasTexture(c);
-  t.colorSpace = THREE.SRGBColorSpace;
-  return {
-    texture: t,
-    w: W / ppu, h: H / ppu,
-    cx: (b.min.x + b.max.x) / 2, cy: (b.min.y + b.max.y) / 2,
-  };
-}
-
-/* ------------------------------------------------------------------ */
-/* HERO — reverse channel letters, halo-lit, powering on               */
-/* ------------------------------------------------------------------ */
-function initHero(font) {
-  const canvas = document.getElementById('hero-canvas');
+function initSigns(onOpen) {
+  const canvas = document.getElementById('signs-canvas');
   const host = canvas.parentElement;
-  const renderer = makeRenderer(canvas);
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isSmall ? 1.75 : 2));
+  renderer.setClearColor(0x000000, 0);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.NoToneMapping;
+
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#0f1828');
-  const env = envFor(renderer);
-  scene.environment = env;
+  const camera = new THREE.PerspectiveCamera(24, 1, 0.1, 100);
+  const loader = new THREE.TextureLoader();
+  const maxAniso = renderer.capabilities.getMaxAnisotropy();
+  const ink = new THREE.MeshBasicMaterial({ color: 0x111111, toneMapped: false });
+  const white = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
+  const shadowTex = shadowTexture();
+  const world = new THREE.Group();
+  scene.add(world);
+  const textures = new Map();
+  const hits = [];
+  let signs = [], railW = 1, viewH = 1, layout = '', dist = 8, camY = 0, camX = 0, spanW = 1;
 
-  const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 200);
-
-  const wallTex = makeWallTexture('#1b2943');
-  wallTex.repeat.set(14, 7);
-  wallTex.offset.set(0.31, 0.62); // keep panel seams off the centre line
-  const wall = new THREE.Mesh(
-    new THREE.PlaneGeometry(60, 30),
-    new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.85, metalness: 0.1, envMapIntensity: 0.2 })
-  );
-  scene.add(wall);
-
-  scene.add(new THREE.AmbientLight(0x9fb2d6, 0.25));
-  const key = new THREE.DirectionalLight(0xdfe7ff, 1.4);
-  key.position.set(-5, 7, 9);
-  scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffcf9a, 0.5);
-  rim.position.set(6, -3, 5);
-  scene.add(rim);
-
-  const warm = [0, 1, 2].map(() => {
-    const l = new THREE.PointLight(0xffb870, 0, 3.5, 2);
-    scene.add(l);
-    return l;
-  });
-
-  const faceMat = new THREE.MeshStandardMaterial({ color: 0x161a21, metalness: 0.6, roughness: 0.3, envMapIntensity: 0.8 });
-  const sideMat = new THREE.MeshStandardMaterial({ color: 0xc3c9d2, metalness: 1, roughness: 0.26, envMapIntensity: 1.2 });
-
-  const SIZE = 1, DEPTH = 0.2, STANDOFF = 0.17;
-  const sign = new THREE.Group();
-  scene.add(sign);
-  let letters = [];
-  let layout = '';
-  let bounds = { w: 1, h: 1 };
-
-  function build(lines) {
-    sign.clear();
-    letters.forEach((l) => { l.mesh.geometry.dispose(); l.glow.geometry.dispose(); l.glowMat.map.dispose(); l.glowMat.dispose(); });
-    letters = [];
-    const lineH = SIZE * 1.12;
-    const runs = lines.map((t) => glyphRun(font, t, SIZE, SIZE * 0.06));
-    const maxW = Math.max(...runs.map((r) => r.width));
-    const capH = SIZE * 0.72;
-    const totalH = capH + lineH * (lines.length - 1);
-    let idx = 0;
-    runs.forEach((run, li) => {
-      const ox = -run.width / 2;
-      const oy = totalH / 2 - capH - li * lineH;
-      run.glyphs.forEach((gl) => {
-        const geo = new THREE.ExtrudeGeometry(gl.shapes, {
-          depth: DEPTH, curveSegments: 8,
-          bevelEnabled: true, bevelThickness: 0.012, bevelSize: 0.008, bevelSegments: 2,
-        });
-        const mesh = new THREE.Mesh(geo, [faceMat, sideMat]);
-        mesh.position.set(ox + gl.x, oy, STANDOFF);
-        sign.add(mesh);
-
-        const h = haloTexture(gl.shapes, SIZE);
-        const glowMat = new THREE.MeshBasicMaterial({
-          map: h.texture, transparent: true, opacity: 0,
-          blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false,
-        });
-        const glow = new THREE.Mesh(new THREE.PlaneGeometry(h.w, h.h), glowMat);
-        glow.position.set(ox + gl.x + h.cx, oy + h.cy, 0.006);
-        sign.add(glow);
-        letters.push({ mesh, glow, glowMat, i: idx++, power: 0 });
-      });
+  function build(narrow) {
+    world.traverse((o) => { if (o.isMesh && o.geometry) o.geometry.dispose(); });
+    world.clear();
+    hits.length = 0;
+    const GAP = 0.36;
+    const spec = narrow ? SIGNS_NARROW : SIGNS.map((sg, k) => ({ k, drop: sg.drop, z: 0 }));
+    const items = spec.map((sp) => {
+      const idx = photoIndex(SIGNS[sp.k].f);
+      const ph = PHOTOS[idx];
+      const w = SIGNS[sp.k].w;
+      return { idx, ph, w, h: w / (ph.w / ph.h), drop: sp.drop, z: sp.z, x: sp.x };
     });
-    bounds = { w: maxW, h: totalH };
-    warm.forEach((l, i) => l.position.set((i - 1) * maxW * 0.36, 0, 0.12));
+    if (!narrow) {
+      // five signs side by side, centred under the rail
+      const total = items.reduce((sum, it) => sum + it.w, 0) + GAP * (items.length - 1);
+      let x = -total / 2;
+      items.forEach((it) => { it.x = x + it.w / 2; x += it.w + GAP; });
+    }
+    const minX = Math.min(...items.map((it) => it.x - it.w / 2));
+    const maxX = Math.max(...items.map((it) => it.x + it.w / 2));
+    spanW = maxX - minX + (narrow ? 0.25 : 0.5);
+    camX = (minX + maxX) / 2;
+    railW = narrow ? 40 : spanW;
+
+    // the ceiling rail: end caps on wide screens, edge to edge on phones
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(railW, 0.045, 0.05), ink);
+    rail.position.set(narrow ? camX : 0, 0.022, 0);
+    world.add(rail);
+    if (!narrow) {
+      [-1, 1].forEach((side) => {
+        const cap = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.13, 0.06), ink);
+        cap.position.set(side * railW / 2, 0.03, 0);
+        world.add(cap);
+      });
+    }
+
+    signs = items.map((it, i) => {
+      const cx = it.x;
+      const z = it.z;
+      const pivot = new THREE.Group();
+      pivot.position.set(cx, 0, z);
+      const hang = new THREE.Group();
+      pivot.add(hang);
+      const cableX = it.w * 0.34;
+      [-1, 1].forEach((side) => {
+        const cable = new THREE.Mesh(new THREE.BoxGeometry(0.007, it.drop, 0.007), ink);
+        cable.position.set(side * cableX, -it.drop / 2, 0);
+        hang.add(cable);
+        const clip = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.035, 0.03), ink);
+        clip.position.set(side * cableX, -it.drop + 0.012, 0.01);
+        hang.add(clip);
+      });
+      const panel = new THREE.Group();
+      panel.position.y = -it.drop - it.h / 2;
+      hang.add(panel);
+      const R = 0.035, D = 0.03;
+      const slab = new THREE.Mesh(new THREE.ExtrudeGeometry(roundedRect(it.w + 0.05, it.h + 0.05, R + 0.015), { depth: D, bevelEnabled: false, curveSegments: 6 }), white);
+      slab.position.z = -D;
+      const mat = new THREE.MeshBasicMaterial({ color: 0xededed, toneMapped: false });
+      const face = new THREE.Mesh(faceGeometry(it.w, it.h, R), mat);
+      face.position.z = 0.002;
+      face.userData.sign = i;
+      hits.push(face);
+      const shadowMat = new THREE.MeshBasicMaterial({ color: 0x000000, map: shadowTex, transparent: true, opacity: 0.24, depthWrite: false, depthTest: false, toneMapped: false });
+      const shadow = new THREE.Mesh(new THREE.PlaneGeometry((it.w + 0.05) * 1.55, (it.h + 0.05) * 1.55), shadowMat);
+      shadow.renderOrder = -1;
+      shadow.position.set(0.05, -0.1, -0.25);
+      panel.add(shadow, slab, face);
+      const apply = (tex) => { mat.map = tex; mat.color.set(0xffffff); mat.needsUpdate = true; };
+      if (textures.has(it.ph.f)) apply(textures.get(it.ph.f));
+      else loader.load(img(it.ph.f, 'wall'), (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = maxAniso;
+        textures.set(it.ph.f, tex);
+        apply(tex);
+      });
+      world.add(pivot);
+      return { pivot, hang, idx: it.idx, w: it.w, h: it.h, drop: it.drop, cx, i, theta: 0, omega: 0, twist: 0, landed: false };
+    });
+    viewH = Math.max(...items.map((it) => it.drop + it.h)) + 0.3;
   }
 
-  const target = new THREE.Vector3();
-  let dist = 10, aimY = 0;
   function fit() {
     const w = host.clientWidth, h = host.clientHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    const wantLayout = camera.aspect < 0.95 ? 'stack' : 'line';
-    if (wantLayout !== layout) {
-      layout = wantLayout;
-      build(layout === 'stack' ? ['GUY', 'DE SILVA'] : ['GUY DE SILVA']);
-    }
+    const mode = w < 600 ? 'narrow' : 'wide';
+    if (mode !== layout) { layout = mode; build(mode === 'narrow'); }
     const vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
     const hHalf = Math.atan(Math.tan(vHalf) * camera.aspect);
-    const fillW = camera.aspect < 0.95 ? 0.84 : 0.8;
-    const distW = (bounds.w / fillW) / 2 / Math.tan(hHalf);
-    const distH = (bounds.h / 0.42) / 2 / Math.tan(vHalf);
-    dist = Math.max(distW, distH) + STANDOFF;
+    dist = Math.max((spanW / 0.97) / 2 / Math.tan(hHalf), ((viewH + 0.12) / 0.97) / 2 / Math.tan(vHalf));
     const visH = 2 * dist * Math.tan(vHalf);
-    // keep the sign in the upper part of the hero, clear of the intro text
-    aimY = -visH * (camera.aspect < 0.95 ? 0.13 : 0.14);
+    camY = 0.1 - visH / 2; // the rail sits along the top edge of the canvas
+    camera.position.set(camX, camY, dist);
+    camera.lookAt(camX, camY, 0);
     camera.updateProjectionMatrix();
   }
   new ResizeObserver(fit).observe(host);
   fit();
 
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  window.addEventListener('pointermove', (e) => {
+  // pointer: brushing past a sign sets it swinging; the signs turn slightly toward the cursor
+  const pointer = { x: 0, tx: 0 };
+  const ndc = new THREE.Vector2(9, 9);
+  const ray = new THREE.Raycaster();
+  const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const hitPoint = new THREE.Vector3();
+  const pw = { x: 0, y: 0, vx: 0, valid: false };
+  let inside = false, hovered = -1;
+  const track = (e) => {
     pointer.tx = (e.clientX / innerWidth) * 2 - 1;
-    pointer.ty = (e.clientY / innerHeight) * 2 - 1;
-  }, { passive: true });
+    const r = canvas.getBoundingClientRect();
+    inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom;
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  };
+  window.addEventListener('pointermove', track, { passive: true });
+  canvas.addEventListener('pointerdown', track);
+  canvas.addEventListener('pointerleave', () => { inside = false; pw.valid = false; });
+  canvas.addEventListener('click', () => { if (hovered >= 0) onOpen(signs[hovered].idx); });
 
   const start = performance.now();
-  const hash = (n) => { const s = Math.sin(n) * 43758.5453; return s - Math.floor(s); };
-  let running = false, raf = 0, last = start;
-
+  let running = false, raf = 0, last = start, first = true;
   function frame(now) {
     raf = requestAnimationFrame(frame);
-    const dt = Math.min(0.1, (now - last) / 1000);
+    const dt = Math.min(0.05, (now - last) / 1000);
     last = now;
     const t = (now - start) / 1000;
 
-    // power-on: each letter flickers on in turn, then holds steady
-    let total = 0;
-    letters.forEach((l) => {
-      let p = 1;
-      if (!reduced) {
-        const k = (now - start - 500 - l.i * 130) / 650;
-        if (k < 0) p = 0;
-        else if (k < 1) p = hash(l.i * 17.3 + Math.floor(k * 16) * 3.1) > 0.42 ? 0.35 + 0.65 * k : 0.04;
+    hovered = -1;
+    if (inside) {
+      ray.setFromCamera(ndc, camera);
+      const hit = ray.intersectObjects(hits, false)[0];
+      if (hit) hovered = hit.object.userData.sign;
+      if (ray.ray.intersectPlane(plane, hitPoint)) {
+        pw.vx = pw.valid ? (hitPoint.x - pw.x) / Math.max(dt, 1 / 120) : 0;
+        pw.x = hitPoint.x; pw.y = hitPoint.y; pw.valid = true;
       }
-      l.power = p;
-      l.glowMat.opacity = p;
-      total += p;
-    });
-    const avg = letters.length ? total / letters.length : 0;
-    warm.forEach((l) => (l.intensity = layout === 'stack' ? 0 : avg * 1.2));
+    } else {
+      pw.vx *= 0.8;
+    }
+    canvas.style.cursor = hovered >= 0 ? 'pointer' : 'default';
 
-    // camera: pointer parallax + slow drift + dolly as the hero scrolls away
-    const k = 1 - Math.exp(-dt * 3);
-    pointer.x += (pointer.tx - pointer.x) * k;
-    pointer.y += (pointer.ty - pointer.y) * k;
-    const drift = reduced ? 0 : Math.sin(t * 0.25) * 0.25;
-    const scrollP = Math.min(1, Math.max(0, window.scrollY / host.clientHeight));
-    const d = dist * (1 - scrollP * 0.18);
-    const px = reduced ? 0 : pointer.x * dist * 0.09 + drift;
-    const py = reduced ? 0 : -pointer.y * dist * 0.05;
-    camera.position.set(px, aimY + py + 0.4, d);
-    target.set(0, aimY, 0);
-    camera.lookAt(target);
+    pointer.x += (pointer.tx - pointer.x) * (1 - Math.exp(-dt * 3));
+    signs.forEach((s) => {
+      // drop in from above the rail, one after another
+      const k = reduced ? 1 : clamp01((now - start - 200 - s.i * 150) / 900);
+      s.pivot.position.y = (1 - easeOutCubic(k)) * 3;
+      if (k >= 1 && !s.landed) { s.landed = true; if (!reduced) s.omega += (s.i % 2 ? 1 : -1) * 0.55; }
+
+      if (!reduced && s.landed) {
+        // a cursor moving across a sign pushes it the way the cursor is going
+        const top = -s.drop, bottom = top - s.h;
+        if (pw.valid && Math.abs(pw.x - s.cx) < s.w / 2 + 0.12 && pw.y < top + 0.1 && pw.y > bottom - 0.1) {
+          s.omega += THREE.MathUtils.clamp(pw.vx, -12, 12) * 0.9 * dt / (s.drop + s.h);
+        }
+        // a pendulum: longer cables swing more slowly
+        const len = s.drop + s.h / 2 + 0.3;
+        s.omega += (-(9.8 / len) * Math.sin(s.theta) - 1.15 * s.omega) * dt;
+        s.theta = THREE.MathUtils.clamp(s.theta + s.omega * dt, -0.5, 0.5);
+      }
+      s.pivot.rotation.z = s.theta;
+      const twistTarget = reduced ? 0 : pointer.x * 0.22 + Math.sin(t * 0.5 + s.i * 1.3) * 0.03 + (s.i === hovered ? -pointer.x * 0.15 : 0);
+      s.twist += (twistTarget - s.twist) * (1 - Math.exp(-dt * 3));
+      s.hang.rotation.y = s.twist;
+    });
+
     renderer.render(scene, camera);
+    if (first) { first = false; root.classList.add('has-3d'); }
   }
 
   whenVisible(host, (vis) => {
@@ -455,353 +440,119 @@ function initHero(font) {
 }
 
 /* ------------------------------------------------------------------ */
-/* GALLERY — a lit wall with one bay per project, walked by scrolling  */
+/* Featured work: a draggable carousel, one card per project           */
 /* ------------------------------------------------------------------ */
-function initGallery(font, onOpen) {
-  const section = document.getElementById('corridor');
-  const canvas = document.getElementById('gallery-canvas');
-  const stage = canvas.parentElement;
-  const renderer = makeRenderer(canvas);
-  renderer.toneMappingExposure = 1.0;
-  const scene = new THREE.Scene();
-  scene.background = new THREE.Color('#0c1422');
-  scene.fog = new THREE.Fog('#0c1422', 12, 30);
-  scene.environment = envFor(renderer);
-  const camera = new THREE.PerspectiveCamera(34, 1, 0.1, 150);
-  const maxAniso = Math.min(8, renderer.capabilities.getMaxAnisotropy());
-  const loader = new THREE.TextureLoader();
+const ARROW = '<svg class="arrow" aria-hidden="true" focusable="false"><use href="#arrow"></use></svg>';
 
-  const Z = 0.17, G = 0.2, BAY_GAP = 2.6, TOP = 1.1;
-  const metal = new THREE.MeshStandardMaterial({ color: 0xc3c9d2, metalness: 1, roughness: 0.3, envMapIntensity: 1 });
-  const edge = new THREE.MeshStandardMaterial({ color: 0x2a3140, metalness: 0.4, roughness: 0.5 });
-  const haloMat = new THREE.MeshBasicMaterial({ color: 0xffc98a, toneMapped: false });
-  const standoffGeo = new THREE.CylinderGeometry(0.03, 0.03, Z, 14);
-  standoffGeo.rotateX(Math.PI / 2);
-
-  // wall, floor and LED strip are resized after each layout
-  const wallTex = makeWallTexture('#1c2a45');
-  const wall = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
-    new THREE.MeshStandardMaterial({ map: wallTex, roughness: 0.85, metalness: 0.1, envMapIntensity: 0.2 }));
-  const floor = new THREE.Mesh(new THREE.PlaneGeometry(1, 1),
-    new THREE.MeshStandardMaterial({ color: 0x5d6572, roughness: 0.35, metalness: 0.2, envMapIntensity: 0.4 }));
-  floor.rotation.x = -Math.PI / 2;
-  const strip = new THREE.Mesh(new THREE.PlaneGeometry(1, 0.025), haloMat);
-  scene.add(wall, floor, strip);
-
-  scene.add(new THREE.HemisphereLight(0xb8c8e8, 0x1a2030, 0.6));
-  const spot = new THREE.SpotLight(0xfff0db, 55, 20, 0.6, 0.7, 1.5);
-  scene.add(spot, spot.target);
-
-  const world = new THREE.Group();
-  scene.add(world);
-  const textures = new Map();
-  let stops = [];
-  let panels = [];
-  let mode = '';
-
-  function bayLayout(project, narrow) {
-    const feats = project.feature.map((i) => ({ idx: i, a: project.photos[i][1] / project.photos[i][2] }));
-    const [L, ...S] = feats;
-    const rects = [];
-    if (!narrow) {
-      const lw = Math.min(2.3 * L.a, 3.6), lh = lw / L.a;
-      rects.push({ ...L, x: 0, y: 0, w: lw, h: lh });
-      if (S.length === 2) {
-        const sh = (lh - G) / 2;
-        S.forEach((s, k) => {
-          const w = Math.min(sh * s.a, 2.4);
-          rects.push({ ...s, x: lw + G, y: -k * (sh + G), w, h: w / s.a });
-        });
-      } else if (S.length === 1) {
-        const w = Math.min(lh * 0.62 * S[0].a, 2.6);
-        rects.push({ ...S[0], x: lw + G, y: 0, w, h: w / S[0].a });
-      }
-    } else {
-      const W = 3.0;
-      const lh = Math.min(W / L.a, 2.4), lw = lh * L.a;
-      rects.push({ ...L, x: (W - lw) / 2, y: 0, w: lw, h: lh });
-      if (S.length) {
-        const n = S.length;
-        const cw = n === 1 ? W * 0.62 : (W - G * (n - 1)) / n;
-        let x = n === 1 ? (W - cw) / 2 : 0;
-        S.forEach((s) => {
-          let w = cw, h = w / s.a;
-          if (h > 1.5) { h = 1.5; w = h * s.a; }
-          rects.push({ ...s, x: x + (cw - w) / 2, y: -(lh + G), w, h });
-          x += cw + G;
-        });
-      }
-    }
-    const w = Math.max(...rects.map((r) => r.x + r.w));
-    const bottom = Math.min(...rects.map((r) => r.y - r.h));
-    return { rects, w, bottom };
-  }
-
-  function makePlate(project, maxW) {
-    const g = new THREE.Group();
-    const main = glyphRun(font, project.plate, 0.3, 0.015);
-    const sub = glyphRun(font, project.sub, 0.12, 0.022);
-    main.glyphs.forEach((gl) => {
-      const m = new THREE.Mesh(new THREE.ExtrudeGeometry(gl.shapes, { depth: 0.05, curveSegments: 5, bevelEnabled: false }), metal);
-      m.position.set(gl.x, 0.42, 0.08);
-      g.add(m);
-    });
-    sub.glyphs.forEach((gl) => {
-      const m = new THREE.Mesh(new THREE.ShapeGeometry(gl.shapes, 5), haloMat);
-      m.position.set(gl.x, 0.16, 0.01);
-      g.add(m);
-    });
-    const bar = new THREE.Mesh(new THREE.PlaneGeometry(Math.max(main.width, sub.width), 0.012), haloMat);
-    bar.position.set(Math.max(main.width, sub.width) / 2, 0.35, 0.01);
-    g.add(bar);
-    const w = Math.max(main.width, sub.width);
-    const s = Math.min(1, maxW / w);
-    g.scale.setScalar(s);
-    return { group: g, w: w * s, h: 0.7 * s };
-  }
-
-  function clearWorld() {
-    world.traverse((o) => {
-      if (o.isMesh && o.geometry !== standoffGeo) o.geometry.dispose();
-      if (o.isMesh && o.userData.ownMat) o.material[4].dispose();
-    });
-    world.clear();
-  }
-
-  function build() {
-    clearWorld();
-    stops = [];
-    panels = [];
-    const narrow = mode === 'narrow';
-    let x = 0;
-    let lowest = 0;
-    PROJECTS.forEach((p) => {
-      const lay = bayLayout(p, narrow);
-      const plate = makePlate(p, narrow ? 3.0 : Math.max(lay.w, 3.6));
-      const bay = new THREE.Group();
-      bay.position.set(x, TOP, 0);
-      plate.group.position.set(0, 0.06, 0);
-      bay.add(plate.group);
-      const mats = [];
-      lay.rects.forEach((r) => {
-        const ph = p.photos[r.idx];
-        const tex = textures.get(ph[0]);
-        // photos are shown unlit and untone-mapped so they match the original files exactly
-        const front = new THREE.MeshBasicMaterial({ color: 0x223049, toneMapped: false, fog: false });
-        if (tex) applyTex(front, tex);
-        const mesh = new THREE.Mesh(new THREE.BoxGeometry(r.w, r.h, 0.05), [edge, edge, edge, edge, front, edge]);
-        mesh.position.set(r.x + r.w / 2, r.y - r.h / 2, Z + 0.025);
-        mesh.userData = { photo: p.first + r.idx, ownMat: true };
-        bay.add(mesh);
-        panels.push(mesh);
-        mats.push({ mat: front, f: ph[0] });
-        const inset = Math.min(0.1, r.w * 0.12, r.h * 0.12);
-        [[-1, -1], [1, -1], [-1, 1], [1, 1]].forEach(([sx, sy]) => {
-          const s = new THREE.Mesh(standoffGeo, metal);
-          s.position.set(r.x + r.w / 2 + sx * (r.w / 2 - inset), r.y - r.h / 2 + sy * (r.h / 2 - inset), Z / 2 + 0.02);
-          bay.add(s);
-        });
-      });
-      world.add(bay);
-      const w = Math.max(lay.w, plate.w);
-      const top = TOP + 0.06 + plate.h;
-      const bottom = TOP + lay.bottom;
-      lowest = Math.min(lowest, bottom);
-      stops.push({ project: p, cx: x + w / 2, cy: (top + bottom) / 2, w, h: top - bottom, mats });
-      x += w + BAY_GAP;
-    });
-    const length = x - BAY_GAP;
-    const floorY = lowest - 2.2;
-    wall.scale.set(length + 80, floorY < -6 ? 30 : 24, 1);
-    wall.position.set(length / 2, floorY + wall.scale.y / 2, 0);
-    wallTex.repeat.set((length + 80) / 4, wall.scale.y / 4);
-    floor.scale.set(length + 80, 16, 1);
-    floor.position.set(length / 2, floorY, 8);
-    strip.scale.set(length + 80, 1, 1);
-    strip.position.set(length / 2, floorY + 0.02, 0.02);
-    section.style.height = `${(stops.length - 1) * 70 + 100}vh`;
-    loaded.clear();
-    active = -1;
-  }
-
-  function applyTex(mat, tex) {
-    mat.map = tex;
-    mat.color.set(0xffffff);
-    mat.needsUpdate = true;
-  }
-
-  // textures load a bay or two ahead of the camera
-  const loaded = new Set();
-  function loadAround(i) {
-    for (let k = i - 1; k <= i + 2; k++) {
-      const s = stops[k];
-      if (!s || loaded.has(k)) continue;
-      loaded.add(k);
-      s.mats.forEach(({ mat, f }) => {
-        if (textures.has(f)) { applyTex(mat, textures.get(f)); return; }
-        loader.load(img(f, 'wall'), (tex) => {
-          tex.colorSpace = THREE.SRGBColorSpace;
-          tex.anisotropy = maxAniso;
-          textures.set(f, tex);
-          applyTex(mat, tex);
-        });
-      });
-    }
-  }
-
-  // UI
-  const elProject = document.getElementById('plaque-project');
-  const elCaption = document.getElementById('plaque-caption');
-  const elCount = document.getElementById('plaque-count');
-  const elBar = document.getElementById('progress-bar');
-  const elOpen = document.getElementById('plaque-open');
-  let active = -1;
-  function setActive(i) {
-    if (i === active) return;
-    active = i;
-    const p = stops[i].project;
-    elProject.textContent = p.title;
-    elCaption.textContent = p.where;
-    elCount.textContent = `Project ${i + 1} of ${stops.length}`;
-    elOpen.textContent = p.photos.length > 1 ? `View ${p.photos.length} photos` : 'View photo';
-    loadAround(i);
-  }
-  elOpen.addEventListener('click', () => onOpen(stops[Math.max(0, active)].project.first));
-
-  let vHalf = 0, hHalf = 0;
-  function fit() {
-    const w = stage.clientWidth, h = stage.clientHeight;
-    renderer.setSize(w, h, false);
-    camera.aspect = w / h;
-    vHalf = THREE.MathUtils.degToRad(camera.fov / 2);
-    hHalf = Math.atan(Math.tan(vHalf) * camera.aspect);
-    camera.updateProjectionMatrix();
-    const want = camera.aspect < 0.9 ? 'narrow' : 'wide';
-    if (want !== mode) { mode = want; build(); }
-  }
-  const distFor = (s) => Math.max((s.w / 0.86) / 2 / Math.tan(hHalf), (s.h / 0.6) / 2 / Math.tan(vHalf));
-
-  const ease = (f) => { const s = f * f * f * (f * (f * 6 - 15) + 10); return f + (s - f) * 0.85; };
-  function scrollTarget(out) {
-    const r = section.getBoundingClientRect();
-    const total = section.offsetHeight - innerHeight;
-    const p = Math.min(1, Math.max(0, -r.top / Math.max(1, total)));
-    elBar.style.width = `${p * 100}%`;
-    const f = p * (stops.length - 1);
-    const i = Math.min(stops.length - 2, Math.floor(f));
-    const e = ease(Math.min(1, f - i));
-    const a = stops[i], b = stops[i + 1];
-    setActive(Math.round(f));
-    out.x = THREE.MathUtils.lerp(a.cx, b.cx, e);
-    out.y = THREE.MathUtils.lerp(a.cy, b.cy, e);
-    out.d = THREE.MathUtils.lerp(distFor(a), distFor(b), e);
-  }
-
-  const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-  stage.addEventListener('pointermove', (e) => {
-    const r = stage.getBoundingClientRect();
-    pointer.tx = ((e.clientX - r.left) / r.width) * 2 - 1;
-    pointer.ty = ((e.clientY - r.top) / r.height) * 2 - 1;
-  }, { passive: true });
-
-  const ray = new THREE.Raycaster();
-  const ndc = new THREE.Vector2();
-  canvas.addEventListener('click', (e) => {
-    const r = canvas.getBoundingClientRect();
-    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
-    ray.setFromCamera(ndc, camera);
-    const hit = ray.intersectObjects(panels, false)[0];
-    if (hit) onOpen(hit.object.userData.photo);
-  });
-
-  new ResizeObserver(fit).observe(stage);
-  fit();
-  setActive(0);
-
-  const tgt = { x: 0, y: 0, d: 8 };
-  scrollTarget(tgt);
-  const cur = { ...tgt };
-  let running = false, raf = 0, last = performance.now();
-  const look = new THREE.Vector3();
-  function frame(now) {
-    raf = requestAnimationFrame(frame);
-    const dt = Math.min(0.1, (now - last) / 1000);
-    last = now;
-    scrollTarget(tgt);
-    const k = 1 - Math.exp(-dt * 7);
-    cur.x += (tgt.x - cur.x) * k;
-    cur.y += (tgt.y - cur.y) * k;
-    cur.d += (tgt.d - cur.d) * k;
-    const kp = 1 - Math.exp(-dt * 3);
-    pointer.x += (pointer.tx - pointer.x) * kp;
-    pointer.y += (pointer.ty - pointer.y) * kp;
-
-    // keep the bay above the caption card; stand a little to the left so depth reads
-    const visH = 2 * cur.d * Math.tan(vHalf);
-    const ly = cur.y - visH * 0.035;
-    camera.position.set(cur.x - cur.d * 0.14 + pointer.x * 0.35, ly + 0.15 - pointer.y * 0.2, cur.d);
-    look.set(cur.x, ly, 0);
-    camera.lookAt(look);
-    spot.position.set(cur.x - 0.8, cur.y + 3.2, 4);
-    spot.target.position.set(cur.x, cur.y - 0.3, 0);
-    renderer.render(scene, camera);
-  }
-
-  whenVisible(stage, (vis) => {
-    if (vis && !running) { running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
-    else if (!vis && running) { running = false; cancelAnimationFrame(raf); }
-  });
-}
-
-/* ------------------------------------------------------------------ */
-/* Project list                                                        */
-/* ------------------------------------------------------------------ */
-function renderProjects(openAt) {
-  const box = document.getElementById('project-list');
+function renderFeatured(openAt) {
+  const track = document.getElementById('carousel');
+  let dragMoved = false;
   PROJECTS.forEach((p) => {
-    const a = document.createElement('article');
-    a.className = 'project';
-    a.id = `project-${p.id}`;
-    const h = document.createElement('header');
-    const h3 = document.createElement('h3'); h3.textContent = p.title;
-    const where = document.createElement('p'); where.className = 'project__where'; where.textContent = p.where;
-    h.append(h3, where);
-    const blurb = document.createElement('p'); blurb.textContent = p.blurb;
-    const tags = document.createElement('ul'); tags.className = 'tags'; tags.setAttribute('aria-label', 'Scope');
-    p.tags.forEach((t) => { const li = document.createElement('li'); li.textContent = t; tags.append(li); });
-    const thumbs = document.createElement('div'); thumbs.className = 'thumbs';
-    p.photos.forEach(([f, , , caption], k) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.setAttribute('aria-label', `Open photo: ${caption}`);
-      const im = document.createElement('img');
-      im.src = img(f, 'thumb'); im.alt = ''; im.loading = 'lazy';
-      b.append(im);
-      b.addEventListener('click', () => openAt(p.first + k));
-      thumbs.append(b);
+    const cover = p.photos[p.feature[0]];
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'slide';
+    b.setAttribute('aria-label', `${p.title}, ${p.where}. View ${p.photos.length} photo${p.photos.length > 1 ? 's' : ''}`);
+    const media = document.createElement('span');
+    media.className = 'slide__media';
+    const im = document.createElement('img');
+    im.src = img(cover[0], 'wall'); im.alt = ''; im.loading = 'lazy'; im.draggable = false;
+    im.width = cover[1]; im.height = cover[2];
+    media.append(im);
+    const plate = document.createElement('span');
+    plate.className = 'plate';
+    const name = document.createElement('span');
+    name.className = 'plate__name';
+    name.textContent = p.short;
+    const where = document.createElement('span');
+    where.className = 'plate__where';
+    where.textContent = p.place || p.where;
+    plate.append(name, where);
+    plate.insertAdjacentHTML('beforeend', ARROW);
+    b.append(media, plate);
+    b.addEventListener('click', (e) => {
+      if (dragMoved) { e.preventDefault(); return; }
+      openAt(p.first + p.feature[0]);
     });
-    a.append(h, blurb, tags, thumbs);
-    box.append(a);
+    track.append(b);
+  });
+
+  // drag to scroll with a mouse; touch and trackpads scroll natively
+  let down = false, sx = 0, sl = 0;
+  track.addEventListener('pointerdown', (e) => {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    down = true; dragMoved = false; sx = e.clientX; sl = track.scrollLeft;
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const dx = e.clientX - sx;
+    if (Math.abs(dx) > 5) { dragMoved = true; track.classList.add('is-dragging'); }
+    track.scrollLeft = sl - dx;
+  });
+  window.addEventListener('pointerup', () => {
+    if (!down) return;
+    down = false;
+    track.classList.remove('is-dragging');
+    setTimeout(() => { dragMoved = false; }, 0);
+  });
+
+  const prev = document.getElementById('car-prev');
+  const next = document.getElementById('car-next');
+  const step = () => Math.max(240, track.clientWidth * 0.7);
+  prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: reduced ? 'auto' : 'smooth' }));
+  next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: reduced ? 'auto' : 'smooth' }));
+  const sync = () => {
+    prev.disabled = track.scrollLeft < 8;
+    next.disabled = track.scrollLeft > track.scrollWidth - track.clientWidth - 8;
+  };
+  track.addEventListener('scroll', sync, { passive: true });
+  new ResizeObserver(sync).observe(track);
+  sync();
+}
+
+/* ------------------------------------------------------------------ */
+/* More work: every photo as a rounded tile                            */
+/* ------------------------------------------------------------------ */
+function renderGrid(openAt) {
+  const box = document.getElementById('grid');
+  PHOTOS.forEach((ph, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'tile';
+    b.setAttribute('aria-label', `${ph.project.title}: ${ph.caption}`);
+    const im = document.createElement('img');
+    im.src = img(ph.f, 'thumb'); im.alt = ''; im.loading = 'lazy'; im.draggable = false;
+    const tag = document.createElement('span');
+    tag.className = 'tile__tag';
+    tag.setAttribute('aria-hidden', 'true');
+    tag.textContent = ph.project.short;
+    b.append(im, tag);
+    b.addEventListener('click', () => openAt(i));
+    box.append(b);
   });
 }
 
 /* ------------------------------------------------------------------ */
-/* Lightbox, nav, copy email                                           */
+/* Photo viewer                                                        */
 /* ------------------------------------------------------------------ */
 const dialog = document.getElementById('lightbox');
 const lbImg = document.getElementById('lightbox-img');
 const lbProject = document.getElementById('lightbox-project');
+const lbWhere = document.getElementById('lightbox-where');
 const lbCaption = document.getElementById('lightbox-caption');
+const lbBlurb = document.getElementById('lightbox-blurb');
 let lbIndex = 0;
 
 function showPhoto(i) {
   lbIndex = (i + PHOTOS.length) % PHOTOS.length;
   const ph = PHOTOS[lbIndex];
-  const n = ph.project.photos.length;
+  const p = ph.project;
   lbImg.src = img(ph.f, 'full');
   lbImg.alt = ph.caption;
-  lbProject.textContent = `${ph.project.title}, ${ph.project.where}`;
-  lbCaption.textContent = `${ph.caption} (${lbIndex - ph.project.first + 1} of ${n})`;
+  lbProject.textContent = p.title;
+  lbWhere.textContent = p.where;
+  lbCaption.textContent = `${ph.caption} (${lbIndex - p.first + 1} of ${p.photos.length})`;
+  lbBlurb.textContent = p.blurb;
   [1, -1].forEach((d) => { const nb = PHOTOS[(lbIndex + d + PHOTOS.length) % PHOTOS.length]; new Image().src = img(nb.f, 'full'); });
 }
 function openLightbox(i) {
@@ -819,93 +570,6 @@ dialog.addEventListener('keydown', (e) => {
   if (e.key === 'ArrowLeft') showPhoto(lbIndex - 1);
   if (e.key === 'ArrowRight') showPhoto(lbIndex + 1);
 });
-
-renderProjects(openLightbox);
-
-// pinned nav: transparent over the hero, solid once you scroll; highlights the current section
-const topbar = document.querySelector('.topbar');
-const onScroll = () => topbar.classList.toggle('is-solid', window.scrollY > 40);
-window.addEventListener('scroll', onScroll, { passive: true });
-onScroll();
-const navLinks = [...document.querySelectorAll('.topbar nav a[href^="#"]')];
-const watched = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
-const seen = new Map();
-const navIO = new IntersectionObserver((entries) => {
-  entries.forEach((e) => seen.set(e.target.id, e.isIntersecting));
-  const current = watched.find((s) => seen.get(s.id));
-  navLinks.forEach((a) => {
-    if (current && a.getAttribute('href') === `#${current.id}`) a.setAttribute('aria-current', 'true');
-    else a.removeAttribute('aria-current');
-  });
-}, { rootMargin: '-45% 0px -50% 0px' });
-watched.forEach((s) => navIO.observe(s));
-
-
-// mobile menu
-const menuBtn = document.getElementById('menu-btn');
-const siteNav = document.getElementById('site-nav');
-const menuMQ = matchMedia('(max-width: 720px)');
-const menuOpen = () => root.classList.contains('menu-open');
-function setMenu(open, { restoreFocus = true } = {}) {
-  root.classList.toggle('menu-open', open);
-  menuBtn.setAttribute('aria-expanded', String(open));
-  menuBtn.querySelector('.menu-btn__label').textContent = open ? 'Close' : 'Menu';
-  if (open) siteNav.querySelector('a').focus({ preventScroll: true });
-  else if (restoreFocus) menuBtn.focus({ preventScroll: true });
-}
-menuBtn.addEventListener('click', () => setMenu(!menuOpen()));
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && menuOpen()) setMenu(false); });
-// keep keyboard focus inside the menu while it is open
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Tab' || !menuOpen()) return;
-  const items = [...topbar.querySelectorAll('a[href], button')];
-  const first = items[0], last = items[items.length - 1];
-  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
-  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
-});
-document.addEventListener('focusin', (e) => { if (menuOpen() && !topbar.contains(e.target)) menuBtn.focus({ preventScroll: true }); });
-menuMQ.addEventListener('change', (e) => { if (!e.matches && menuOpen()) setMenu(false, { restoreFocus: false }); });
-
-// time-based glide: always lands on target, even if frames are slow; any user scroll input cancels it
-let glide = 0;
-function glideTo(y) {
-  cancelAnimationFrame(glide);
-  const from = window.scrollY, d = y - from, t0 = performance.now(), dur = 520;
-  const stop = () => { cancelAnimationFrame(glide); ['wheel', 'touchstart', 'keydown'].forEach((ev) => removeEventListener(ev, stop)); };
-  ['wheel', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, stop, { passive: true, once: true }));
-  const step = (now) => {
-    const k = Math.min(1, (now - t0) / dur);
-    window.scrollTo(0, from + d * (1 - Math.pow(1 - k, 3)));
-    if (k < 1) glide = requestAnimationFrame(step); else stop();
-  };
-  glide = requestAnimationFrame(step);
-}
-
-// In-page links: long jumps cut most of the way instantly, then glide the last screen.
-// (Native smooth scrolling stalls over very long distances, and racing the camera past
-// every bay of the 3D wall is unpleasant.)
-document.addEventListener('click', (e) => {
-  const a = e.target.closest('a[href^="#"]');
-  if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
-  const id = a.getAttribute('href').slice(1);
-  const el = id ? document.getElementById(id) : null;
-  if (!el) return;
-  e.preventDefault();
-  if (menuOpen()) setMenu(false, { restoreFocus: false });
-  const offset = id === 'top' ? 0 : topbar.offsetHeight + 12;
-  const y = Math.max(0, el.getBoundingClientRect().top + window.scrollY - offset);
-  const dist = y - window.scrollY;
-  if (reduced) window.scrollTo(0, y);
-  else {
-    if (Math.abs(dist) > innerHeight * 1.5) window.scrollTo(0, y - Math.sign(dist) * innerHeight * 0.8);
-    glideTo(y);
-  }
-  try { history.replaceState(null, '', `#${id}`); } catch (err) { /* ignore */ }
-  if (el.tabIndex < 0 && !/^(A|BUTTON|INPUT)$/.test(el.tagName)) { el.setAttribute('tabindex', '-1'); }
-  el.focus({ preventScroll: true });
-});
-
-// swipe between photos in the viewer
 let touchX = null;
 dialog.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; }, { passive: true });
 dialog.addEventListener('touchend', (e) => {
@@ -915,6 +579,108 @@ dialog.addEventListener('touchend', (e) => {
   touchX = null;
 }, { passive: true });
 
+/* ------------------------------------------------------------------ */
+/* Menu (floating button), section highlight, in-page links            */
+/* ------------------------------------------------------------------ */
+const menuBtn = document.getElementById('menu-btn');
+const siteNav = document.getElementById('site-nav');
+const menuOpen = () => root.classList.contains('menu-open');
+function setMenu(open, { restoreFocus = true } = {}) {
+  root.classList.toggle('menu-open', open);
+  menuBtn.setAttribute('aria-expanded', String(open));
+  menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
+  if (open) siteNav.querySelector('a').focus({ preventScroll: true });
+  else if (restoreFocus) menuBtn.focus({ preventScroll: true });
+}
+menuBtn.addEventListener('click', () => setMenu(!menuOpen()));
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && menuOpen()) setMenu(false);
+  if (e.key !== 'Tab' || !menuOpen()) return;
+  const items = [...siteNav.querySelectorAll('a[href]'), menuBtn];
+  const firstItem = items[0], lastItem = items[items.length - 1];
+  if (e.shiftKey && document.activeElement === firstItem) { e.preventDefault(); lastItem.focus(); }
+  else if (!e.shiftKey && document.activeElement === lastItem) { e.preventDefault(); firstItem.focus(); }
+});
+document.addEventListener('focusin', (e) => {
+  if (menuOpen() && !siteNav.contains(e.target) && e.target !== menuBtn) menuBtn.focus({ preventScroll: true });
+});
+
+const navLinks = [...siteNav.querySelectorAll('a[href^="#"]')];
+const watched = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+const seen = new Map();
+function markCurrent() {
+  // at the very bottom of the page the footer can't reach mid-screen, so it wins outright
+  const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+  const current = atBottom ? watched[watched.length - 1] : watched.find((s) => seen.get(s.id));
+  navLinks.forEach((a) => {
+    if (current && a.getAttribute('href') === `#${current.id}`) a.setAttribute('aria-current', 'true');
+    else a.removeAttribute('aria-current');
+  });
+}
+const navIO = new IntersectionObserver((entries) => {
+  entries.forEach((e) => seen.set(e.target.id, e.isIntersecting));
+  markCurrent();
+}, { rootMargin: '-45% 0px -50% 0px' });
+watched.forEach((s) => navIO.observe(s));
+window.addEventListener('scroll', markCurrent, { passive: true });
+
+// time-based glide: always lands on target, even if frames are slow; any user scroll input cancels it
+let glide = 0;
+function glideTo(y) {
+  cancelAnimationFrame(glide);
+  const from = window.scrollY, d = y - from, t0 = performance.now(), dur = 520;
+  const stop = () => { cancelAnimationFrame(glide); ['wheel', 'touchstart', 'keydown'].forEach((ev) => removeEventListener(ev, stop)); };
+  ['wheel', 'touchstart', 'keydown'].forEach((ev) => addEventListener(ev, stop, { passive: true, once: true }));
+  const stepFn = (now) => {
+    const k = Math.min(1, (now - t0) / dur);
+    window.scrollTo(0, from + d * (1 - Math.pow(1 - k, 3)));
+    if (k < 1) glide = requestAnimationFrame(stepFn); else stop();
+  };
+  glide = requestAnimationFrame(stepFn);
+}
+
+// In-page links: long jumps cut most of the way instantly, then glide the last screen.
+document.addEventListener('click', (e) => {
+  const a = e.target.closest('a[href^="#"]');
+  if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
+  const id = a.getAttribute('href').slice(1);
+  const el = id ? document.getElementById(id) : null;
+  if (!el) return;
+  e.preventDefault();
+  if (menuOpen()) setMenu(false, { restoreFocus: false });
+  const y = id === 'top' ? 0 : Math.max(0, el.getBoundingClientRect().top + window.scrollY - 16);
+  const dist = y - window.scrollY;
+  if (reduced) window.scrollTo(0, y);
+  else {
+    if (Math.abs(dist) > innerHeight * 1.5) window.scrollTo(0, y - Math.sign(dist) * innerHeight * 0.8);
+    glideTo(y);
+  }
+  try { history.replaceState(null, '', `#${id}`); } catch (err) { /* ignore */ }
+  if (el.tabIndex < 0 && !/^(A|BUTTON|INPUT)$/.test(el.tagName)) el.setAttribute('tabindex', '-1');
+  el.focus({ preventScroll: true });
+});
+
+const footer = document.getElementById('contact');
+new IntersectionObserver(([e]) => root.classList.toggle('at-contact', e.isIntersecting), { threshold: 0.15 }).observe(footer);
+
+// size CONTACT and its arrow so together they span the sign exactly, whatever the screen width
+const word = document.querySelector('.footer__word');
+const wordText = word.querySelector('.footer__text');
+function fitWord() {
+  const cs = getComputedStyle(wordText, '::before');
+  const ctx = fitWord.ctx || (fitWord.ctx = document.createElement('canvas').getContext('2d'));
+  ctx.font = `800 100px ${cs.fontFamily}`;
+  const text = 'CONTACT';
+  const textW = (ctx.measureText(text).width - 0.03 * 100 * text.length) / 100;
+  const ratio = textW + 0.66 + 0.08; // text, arrow, gap (in units of font size)
+  word.style.setProperty('--word-size', `${(word.clientWidth / ratio) * 0.985}px`);
+}
+new ResizeObserver(fitWord).observe(word);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitWord);
+
+/* ------------------------------------------------------------------ */
+/* Copy email                                                          */
+/* ------------------------------------------------------------------ */
 const copyBtn = document.getElementById('copy-email');
 const copyStatus = document.getElementById('copy-status');
 const emailEl = document.getElementById('email-addr');
@@ -933,15 +699,10 @@ copyBtn.addEventListener('click', () => {
 /* ------------------------------------------------------------------ */
 /* Boot                                                                */
 /* ------------------------------------------------------------------ */
-async function boot() {
-  if (!hasWebGL()) { root.classList.add('no-webgl'); return; }
-  try {
-    const font = await new FontLoader().loadAsync('assets/fonts/bigshoulders-800.typeface.json');
-    initHero(font);
-    if (!reduced) initGallery(font, openLightbox);
-  } catch (err) {
-    console.error(err);
-    root.classList.add('no-webgl');
-  }
+renderFeatured(openLightbox);
+renderGrid(openLightbox);
+if (hasWebGL()) {
+  try { initSigns(openLightbox); } catch (err) { console.error(err); root.classList.add('no-webgl'); }
+} else {
+  root.classList.add('no-webgl');
 }
-boot();

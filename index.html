@@ -10,15 +10,15 @@
 <meta property="og:description" content="Design-trained, operations-led. Large-scale signage programs for nationally recognized brands across the United States and Canada.">
 <meta property="og:image" content="https://guydesilva.com/assets/work/full/steelers-01.jpg">
 <meta property="og:url" content="https://guydesilva.com/">
-<meta name="theme-color" content="#0f1828">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%230f1828'/%3E%3Ctext x='32' y='44' text-anchor='middle' font-family='Arial Narrow,Arial,sans-serif' font-weight='900' font-size='30' fill='%23ffc98a'%3EGDS%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#ffffff">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23ffcd00'/%3E%3Cpath d='M12 28.6h24.5L26 18.1l5.9-5.9L51.6 32 31.9 51.8 26 45.9l10.5-10.5H12z' fill='%23111111'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Instrument+Sans:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap">
 <link rel="stylesheet" href="css/style.css">
 <script>
   // If the 3D code can't start (file opened from disk, very old browser, blocked script),
-  // fall back to the styled name and the plain project list instead of an empty hero.
+  // the page falls back to static hanging photos and a note instead of empty sections.
   document.documentElement.classList.add('js');
   setTimeout(function () {
     if (!window.__gdsBoot) document.documentElement.classList.add('no-webgl', 'no-module');
@@ -27,187 +27,151 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "./assets/vendor/three.module.min.js",
-    "three/addons/": "./assets/vendor/addons/"
+    "three": "./assets/vendor/three.module.min.js"
   }
 }
 </script>
 </head>
 <body>
 
-<header class="topbar">
-  <div class="wrap topbar__inner">
-    <a class="mark" href="#top" aria-label="Guy De Silva, back to top">GDS</a>
-    <nav id="site-nav" aria-label="Sections">
-      <a href="#work"><span class="nav__name">Work</span> <span class="nav__note">11 signage programs</span></a>
-      <a href="#profile"><span class="nav__name">Profile</span> <span class="nav__note">Background and role</span></a>
-      <a href="#clients"><span class="nav__name">Clients</span> <span class="nav__note">Brands and partners</span></a>
-      <a href="#contact"><span class="nav__name">Contact</span> <span class="nav__note">Email Guy</span></a>
-      <p class="nav__extra">Director of Operations, corporate signage<br><a href="mailto:gyndesilva@gmail.com">gyndesilva@gmail.com</a></p>
-    </nav>
-    <button class="menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav">
-      <span class="menu-btn__icon" aria-hidden="true"></span><span class="menu-btn__label">Menu</span>
-    </button>
-  </div>
-</header>
+<!-- wayfinding arrow pictogram, used throughout -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M3 10.2h10.4L8.9 5.7l2.5-2.5L20.2 12l-8.8 8.8-2.5-2.5 4.5-4.5H3z" fill="currentColor"/></symbol>
+</svg>
+
+<button class="fab fab--menu" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Menu">
+  <span class="fab__bars" aria-hidden="true"></span>
+</button>
+<a class="fab fab--contact" href="#contact" aria-label="Contact Guy">
+  <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path d="M4 6.5h16v11H4z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M4.5 7l7.5 6 7.5-6" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</a>
+
+<nav class="menu" id="site-nav" aria-label="Sections">
+  <a href="#work"><span class="menu__arrow" aria-hidden="true"><svg class="arrow"><use href="#arrow"/></svg></span><span class="menu__name">Featured work</span><span class="menu__note">11 signage programs</span></a>
+  <a href="#about"><span class="menu__arrow" aria-hidden="true"><svg class="arrow"><use href="#arrow"/></svg></span><span class="menu__name">About</span><span class="menu__note">Background and role</span></a>
+  <a href="#more-work"><span class="menu__arrow" aria-hidden="true"><svg class="arrow"><use href="#arrow"/></svg></span><span class="menu__name">More work</span><span class="menu__note">Every photo</span></a>
+  <a href="#contact"><span class="menu__arrow" aria-hidden="true"><svg class="arrow"><use href="#arrow"/></svg></span><span class="menu__name">Contact</span><span class="menu__note">Email Guy</span></a>
+  <p class="menu__extra"><a href="mailto:gyndesilva@gmail.com">gyndesilva@gmail.com</a></p>
+</nav>
 
 <main id="top">
 
-  <!-- HERO: halo-lit reverse channel letters, rendered in Three.js -->
-  <section class="hero" aria-label="Introduction">
-    <canvas id="hero-canvas" aria-hidden="true"></canvas>
-    <div class="hero__fallback" aria-hidden="true">Guy De Silva</div>
-    <div class="wrap hero__content">
-      <div class="hero__intro">
-        <h1 class="sr-only">Guy De Silva</h1>
-        <p class="hero__role">Director of Operations, corporate signage</p>
-        <p class="hero__lede">Designer by training. I run the operation that turns design intent into signs for brands people walk past every day.</p>
-        <a class="btn" href="#work">See the work</a>
+  <!-- HERO -->
+  <section class="hero" aria-labelledby="hero-name">
+    <p class="tag"><span class="tag__dot" aria-hidden="true"></span>Corporate signage across the United States and Canada</p>
+    <h1 class="hero__name" id="hero-name">Guy De Silva</h1>
+    <p class="hero__role">Director of Operations</p>
+    <div class="signs">
+      <canvas id="signs-canvas" aria-hidden="true"></canvas>
+      <div class="signs__fallback" aria-hidden="true">
+        <span class="hang" style="--drop:34px"><img src="assets/work/wall/sdusd-01.jpg" alt="" width="1024" height="683"></span>
+        <span class="hang" style="--drop:8px"><img src="assets/work/wall/disney-05.jpg" alt="" width="683" height="1024"></span>
+        <span class="hang" style="--drop:56px"><img src="assets/work/wall/sazoo-03.jpg" alt="" width="1024" height="768"></span>
+        <span class="hang" style="--drop:20px"><img src="assets/work/wall/mlb-03.jpg" alt="" width="1024" height="972"></span>
+        <span class="hang" style="--drop:44px"><img src="assets/work/wall/hzoo-03.jpg" alt="" width="1024" height="523"></span>
       </div>
-      <div class="spec">
-        <p class="spec__head" id="spec-title">Sign type HL-1, the sign above</p>
-        <dl aria-labelledby="spec-title">
-        <div><dt>Letters</dt><dd>Reverse channel, halo-lit</dd></div>
-        <div><dt>Returns</dt><dd>3 in. brushed aluminum</dd></div>
-        <div><dt>Illumination</dt><dd>3000K warm white LED</dd></div>
-        <div><dt>Mounting</dt><dd>1.5 in. standoffs</dd></div>
-        </dl>
+    </div>
+    <div class="hero__clients">
+      <p class="tag tag--small"><span class="tag__dot" aria-hidden="true"></span>Clients include</p>
+      <p class="hero__client-list"><span>Disney <i>/</i></span> <span>Universal Studios <i>/</i></span> <span>NFL <i>/</i></span> <span>NBA <i>/</i></span> <span>MLB <i>/</i></span> <span>United States Air Force <i>/</i></span> <span>LaGuardia Airport <i>/</i></span> <span>New Jersey Transit <i>/</i></span> <span>Amtrak <i>/</i></span> <span>National Parks <i>/</i></span> <span>Target <i>/</i></span> <span>Mayo Clinic <i>/</i></span> <span>San Antonio Zoo <i>/</i></span> <span>Houston Zoo</span></p>
+    </div>
+  </section>
+
+  <!-- FEATURED WORK: the carousel scrolls sideways, so its sign points right -->
+  <section class="block" id="work" aria-labelledby="work-title">
+    <div class="sign-head">
+      <span class="sign-head__arrow" aria-hidden="true"><svg class="arrow"><use href="#arrow"/></svg></span>
+      <h2 class="sign-head__title" id="work-title">Featured work</h2>
+      <p class="sign-head__desc">Select signage programs, from theme parks to stadiums. Drag or use the arrows.</p>
+    </div>
+    <div class="carousel">
+      <div class="carousel__track" id="carousel" role="region" aria-label="Featured projects"></div>
+      <div class="carousel__nav">
+        <button class="sq-btn" id="car-prev" type="button" aria-label="Previous projects"><svg class="arrow arrow--left" aria-hidden="true"><use href="#arrow"/></svg></button>
+        <button class="sq-btn" id="car-next" type="button" aria-label="Next projects"><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg></button>
       </div>
     </div>
   </section>
 
-  <!-- PROFILE -->
-  <section class="profile" id="profile">
-    <div class="wrap profile__grid">
-      <figure class="portrait">
-        <img src="assets/guy-portrait.jpg" alt="Portrait of Guy De Silva" width="370" height="540" loading="lazy">
-      </figure>
-      <div class="profile__text">
-        <h2>I connect the design studio to the shop floor.</h2>
+  <!-- ABOUT -->
+  <section class="block about" id="about" aria-labelledby="about-title">
+    <div class="sign-head">
+      <span class="sign-head__arrow" aria-hidden="true"><svg class="arrow arrow--down"><use href="#arrow"/></svg></span>
+      <h2 class="sign-head__title" id="about-title">About</h2>
+      <p class="sign-head__desc">Design-trained, operations-led</p>
+    </div>
+    <div class="about__grid">
+      <div class="about__bio">
         <p>I'm a results-driven Director of Operations with a Bachelor of Fine Arts in Design and deep experience in the national corporate signage industry. I oversee day-to-day facility operations, strengthen client relationships, tighten workflows, raise productivity and drive annual revenue growth.</p>
         <p>I manage complex, large-scale signage projects for nationally recognized brands and organizations, working with general contractors, architects and leading design firms across the United States and Canada. A background in shipping and logistics means I plan the whole route a sign takes, from the shop to the job site.</p>
-        <dl class="facts">
-          <div><dt>Education</dt><dd>BFA in Design</dd></div>
-          <div><dt>Role</dt><dd>Director of Operations</dd></div>
-          <div><dt>Reach</dt><dd>United States and Canada</dd></div>
+      </div>
+      <div class="directory">
+        <p class="tag tag--yellow"><span class="tag__dot" aria-hidden="true"></span>At a glance</p>
+        <dl class="directory__list">
+          <div><dt>National brands served</dt><dd>14</dd></div>
+          <div><dt>Partner firms</dt><dd>6</dd></div>
+          <div><dt>Project reach</dt><dd>US &amp; Canada</dd></div>
+          <div><dt>Degree</dt><dd>BFA, Design</dd></div>
         </dl>
       </div>
     </div>
-  </section>
-
-  <!-- WORK: 3D gallery wall -->
-  <section class="work" id="work">
-    <div class="wrap work__head">
-      <h2>Selected installations</h2>
-      <p>Installations for theme parks, stadiums, an airport, zoos, schools and the Air Force. Scroll to walk the wall, or tap a panel to see the full photo.</p>
-      <a class="skip" href="#all-projects">Skip to the project list</a>
-    </div>
-
-    <div class="corridor" id="corridor">
-      <div class="corridor__stage">
-        <canvas id="gallery-canvas" aria-hidden="true"></canvas>
-        <div class="wrap corridor__ui">
-          <div class="plaque" aria-live="polite">
-            <p class="plaque__project" id="plaque-project">Walt Disney World</p>
-            <p class="plaque__caption" id="plaque-caption">Orlando, Florida</p>
-          </div>
-          <div class="corridor__meta">
-            <span class="counter" id="plaque-count">Project 1 of 11</span>
-            <button class="btn btn--ghost" id="plaque-open" type="button">View photos</button>
-          </div>
-        </div>
-        <div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
-      </div>
-    </div>
-
-    <div class="wrap projects__head" id="all-projects">
-      <h3>All projects</h3>
-    </div>
-    <div class="wrap projects" id="project-list"><p class="projects__fallback">The project photos need JavaScript. Open guydesilva.com in an up-to-date browser to see them.</p></div>
-  </section>
-
-  <!-- CLIENTS: building directory board -->
-  <section class="clients" id="clients">
-    <div class="wrap clients__grid">
-      <div class="clients__intro">
-        <h2>Brands I've delivered signage for</h2>
-        <p>Programs for nationally recognized brands and organizations, held to their standards for quality, timelines and execution.</p>
-      </div>
-      <div class="directory" role="table" aria-label="Brands served">
-        <div class="directory__title" role="row"><span role="columnheader">Directory</span><span role="columnheader">Sector</span><span role="columnheader" class="directory__dup">Directory</span><span role="columnheader" class="directory__dup">Sector</span></div>
-        <div class="directory__rows" role="rowgroup">
-          <div class="directory__row" role="row"><span role="cell">Disney</span><span role="cell">Entertainment</span></div>
-          <div class="directory__row" role="row"><span role="cell">Universal Studios</span><span role="cell">Entertainment</span></div>
-          <div class="directory__row" role="row"><span role="cell">NFL</span><span role="cell">Sports</span></div>
-          <div class="directory__row" role="row"><span role="cell">NBA</span><span role="cell">Sports</span></div>
-          <div class="directory__row" role="row"><span role="cell">MLB</span><span role="cell">Sports</span></div>
-          <div class="directory__row" role="row"><span role="cell">United States Air Force</span><span role="cell">Defense</span></div>
-          <div class="directory__row" role="row"><span role="cell">LaGuardia Airport</span><span role="cell">Aviation</span></div>
-          <div class="directory__row" role="row"><span role="cell">New Jersey Transit</span><span role="cell">Transit</span></div>
-          <div class="directory__row" role="row"><span role="cell">Amtrak</span><span role="cell">Rail</span></div>
-          <div class="directory__row" role="row"><span role="cell">National Parks</span><span role="cell">Public lands</span></div>
-          <div class="directory__row" role="row"><span role="cell">San Antonio Zoo</span><span role="cell">Zoos</span></div>
-          <div class="directory__row" role="row"><span role="cell">Houston Zoo</span><span role="cell">Zoos</span></div>
-          <div class="directory__row" role="row"><span role="cell">Target</span><span role="cell">Retail</span></div>
-          <div class="directory__row" role="row"><span role="cell">Mayo Clinic</span><span role="cell">Healthcare</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="wrap partners">
-      <h3>Built alongside</h3>
-      <p>General contractors, architects and design firms across the United States and Canada.</p>
-      <ul class="partners__list">
-        <li>Swinerton</li><li>Balfour Beatty</li><li>Level 10</li><li>Design Communications</li><li>Gensler</li><li>Creo</li>
-      </ul>
+    <h3 class="about__subhead">What I run</h3>
+    <ul class="skills">
+      <li><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg><h4>Facility operations</h4><p>Day-to-day oversight of the production floor, its people and its schedule.</p></li>
+      <li><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg><h4>Project management</h4><p>Large, multi-site programs carried from approved drawings to final install.</p></li>
+      <li><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg><h4>Workflow and productivity</h4><p>Finding the slow step in the process and fixing it, so more work ships on time.</p></li>
+      <li><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg><h4>Client relationships</h4><p>Lasting partnerships with brands, builders and design firms.</p></li>
+      <li><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg><h4>Business development</h4><p>Winning the right work and growing annual revenue year over year.</p></li>
+      <li><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg><h4>Shipping and logistics</h4><p>Crating, freight, scheduling and delivery planned around the job site.</p></li>
+    </ul>
+    <div class="partners">
+      <p class="tag tag--small"><span class="tag__dot" aria-hidden="true"></span>Built alongside</p>
+      <p class="partners__list"><span>Swinerton <i>/</i></span> <span>Balfour Beatty <i>/</i></span> <span>Level 10 <i>/</i></span> <span>Design Communications <i>/</i></span> <span>Gensler <i>/</i></span> <span>Creo</span></p>
     </div>
   </section>
 
-  <!-- OPERATIONS -->
-  <section class="ops" id="operations">
-    <div class="wrap">
-      <h2>What I run</h2>
-      <ul class="ops__list">
-        <li><h3>Facility operations</h3><p>Day-to-day oversight of the production floor, its people and its schedule.</p></li>
-        <li><h3>Project management</h3><p>Large, multi-site programs carried from approved drawings to final install.</p></li>
-        <li><h3>Workflow and productivity</h3><p>Finding the slow step in the process and fixing it, so more work ships on time.</p></li>
-        <li><h3>Client relationships</h3><p>Lasting partnerships with brands, builders and design firms.</p></li>
-        <li><h3>Business development</h3><p>Winning the right work and growing annual revenue year over year.</p></li>
-        <li><h3>Shipping and logistics</h3><p>Crating, freight, scheduling and delivery planned around the job site.</p></li>
-      </ul>
+  <!-- MORE WORK: the grid continues below, so its sign points down -->
+  <section class="block" id="more-work" aria-labelledby="more-title">
+    <div class="sign-head">
+      <span class="sign-head__arrow" aria-hidden="true"><svg class="arrow arrow--down"><use href="#arrow"/></svg></span>
+      <h2 class="sign-head__title" id="more-title">More work</h2>
+      <p class="sign-head__desc">Every photo from every program. Take a scroll.</p>
     </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="contact" id="contact">
-    <div class="wrap contact__inner">
-      <h2>Planning a sign program?</h2>
-      <p>Tell me about the project, the sites and the deadline.</p>
-      <div class="email">
-        <a class="email__addr" id="email-addr" href="mailto:gyndesilva@gmail.com">gyndesilva@gmail.com</a>
-        <button class="btn btn--ghost" id="copy-email" type="button">Copy email</button>
-        <span class="email__status" id="copy-status" role="status"></span>
-      </div>
-    </div>
+    <div class="grid" id="grid"><p class="grid__fallback">The project photos need JavaScript. Open guydesilva.com in an up-to-date browser to see them.</p></div>
   </section>
 </main>
 
-<footer class="footer">
-  <div class="wrap footer__inner">
-    <span>© 2026 Guy De Silva</span>
-    <span>guydesilva.com</span>
+<!-- CONTACT: a yellow wayfinding sign -->
+<footer class="footer" id="contact" aria-labelledby="contact-title">
+  <div class="footer__sign">
+    <h2 class="sr-only" id="contact-title">Contact</h2>
+    <p class="footer__word" aria-hidden="true"><span class="footer__text"></span><svg class="arrow footer__arrow"><use href="#arrow"/></svg></p>
+    <div class="footer__body">
+      <p class="footer__lede">Planning a sign program? Tell me about the project, the sites and the deadline.</p>
+      <a class="footer__email" id="email-addr" href="mailto:gyndesilva@gmail.com">gyndesilva@gmail.com</a>
+      <div class="footer__actions">
+        <a class="pill-btn" href="mailto:gyndesilva@gmail.com">Email Guy</a>
+        <button class="pill-btn pill-btn--outline" id="copy-email" type="button">Copy email</button>
+      </div>
+      <span class="footer__status" id="copy-status" role="status"></span>
+    </div>
   </div>
+  <p class="footer__legal"><span>© 2026 Guy De Silva</span> <a href="#top">Back to top</a></p>
 </footer>
 
 <dialog class="lightbox" id="lightbox" aria-label="Photo viewer">
   <figure>
     <img id="lightbox-img" src="" alt="">
-    <figcaption><span id="lightbox-project"></span><span id="lightbox-caption"></span></figcaption>
+    <figcaption>
+      <span class="plate plate--inline"><span class="plate__name" id="lightbox-project"></span><span class="plate__where" id="lightbox-where"></span></span>
+      <span class="lightbox__caption" id="lightbox-caption"></span>
+      <span class="lightbox__blurb" id="lightbox-blurb"></span>
+    </figcaption>
   </figure>
   <div class="lightbox__controls">
-    <button type="button" class="btn btn--ghost" id="lb-prev" aria-label="Previous photo">Previous</button>
-    <button type="button" class="btn btn--ghost" id="lb-next" aria-label="Next photo">Next</button>
-    <button type="button" class="btn" id="lb-close" autofocus>Close</button>
+    <button type="button" class="sq-btn" id="lb-prev" aria-label="Previous photo"><svg class="arrow arrow--left" aria-hidden="true"><use href="#arrow"/></svg></button>
+    <button type="button" class="pill-btn" id="lb-close" autofocus>Close</button>
+    <button type="button" class="sq-btn" id="lb-next" aria-label="Next photo"><svg class="arrow" aria-hidden="true"><use href="#arrow"/></svg></button>
   </div>
 </dialog>
 
