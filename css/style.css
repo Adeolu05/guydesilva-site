@@ -165,7 +165,10 @@ section[id], .projects .project { scroll-margin-top: 72px; }
   text-shadow: 0 0 18px var(--halo), 0 0 60px rgba(255, 201, 138, 0.6);
   padding: 0 16px;
 }
-.no-webgl .hero__fallback { display: grid; }
+.no-webgl .hero__fallback, html:not(.js) .hero__fallback { display: grid; }
+html:not(.js) .corridor, html:not(.js) .skip { display: none; }
+.projects__fallback { display: none; color: var(--steel); }
+.no-module .projects__fallback, html:not(.js) .projects__fallback { display: block; }
 .hero__content {
   position: relative; z-index: 2;
   display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap;

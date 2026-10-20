@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
+window.__gdsBoot = true;
+
 /* ------------------------------------------------------------------ */
 /* Content — one entry per project. Photos live in assets/work/        */
 /* full/ (viewer), wall/ (3D wall) and thumb/ (project list).          */
@@ -825,7 +827,7 @@ const topbar = document.querySelector('.topbar');
 const onScroll = () => topbar.classList.toggle('is-solid', window.scrollY > 40);
 window.addEventListener('scroll', onScroll, { passive: true });
 onScroll();
-const navLinks = [...document.querySelectorAll('.topbar nav a')];
+const navLinks = [...document.querySelectorAll('.topbar nav a[href^="#"]')];
 const watched = navLinks.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
 const seen = new Map();
 const navIO = new IntersectionObserver((entries) => {

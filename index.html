@@ -16,11 +16,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800;900&family=Instrument+Sans:wght@400;500;600&display=swap">
 <link rel="stylesheet" href="css/style.css">
+<script>
+  // If the 3D code can't start (file opened from disk, very old browser, blocked script),
+  // fall back to the styled name and the plain project list instead of an empty hero.
+  document.documentElement.classList.add('js');
+  setTimeout(function () {
+    if (!window.__gdsBoot) document.documentElement.classList.add('no-webgl', 'no-module');
+  }, 6000);
+</script>
 <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+    "three": "./assets/vendor/three.module.min.js",
+    "three/addons/": "./assets/vendor/addons/"
   }
 }
 </script>
@@ -115,7 +123,7 @@
     <div class="wrap projects__head" id="all-projects">
       <h3>All projects</h3>
     </div>
-    <div class="wrap projects" id="project-list"></div>
+    <div class="wrap projects" id="project-list"><p class="projects__fallback">The project photos need JavaScript. Open guydesilva.com in an up-to-date browser to see them.</p></div>
   </section>
 
   <!-- CLIENTS: building directory board -->
