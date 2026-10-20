@@ -12,13 +12,16 @@ assets/work/wall/     smaller copies used as textures on the 3D wall (1024px max
 assets/work/thumb/    thumbnails for the project list (420px max)
 assets/guy-portrait.jpg
 assets/fonts/bigshoulders-800.typeface.json   3D letter font (Big Shoulders Display, OFL)
+assets/vendor/        Three.js and the two add-ons the site uses
+CNAME, .nojekyll      GitHub Pages: custom domain, serve files as-is
 ```
 
-Three.js 0.160.0 loads from jsDelivr through the import map in `index.html`.
+Three.js 0.160.0 is bundled in `assets/vendor/` and wired up by the import map in `index.html`,
+so the site has no CDN dependency.
 
 ## Local preview
 
-ES modules and the font JSON need a server, not a double-clicked file:
+The 3D needs a local server. A double-clicked `index.html` only shows the plain fallback:
 
 ```
 npx serve .
